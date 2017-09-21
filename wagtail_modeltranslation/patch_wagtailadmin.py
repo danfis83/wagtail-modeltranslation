@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from modeltranslation import settings as mt_settings
 from modeltranslation.translator import translator, NotRegistered
 from modeltranslation.utils import build_localized_fieldname, get_language
+from wagtail import VERSION as wagtail_version
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.views import get_setting_edit_handler
 from wagtail.contrib.wagtailroutablepage.models import RoutablePageMixin
@@ -94,8 +95,13 @@ class WagtailTranslator(object):
         model.set_url_path = _new_set_url_path
         model.route = _new_route
         model.get_site_root_paths = _new_get_site_root_paths
-        model.relative_url = _new_relative_url
-        model.url = _new_url
+
+        # FIXME: check since which version we can use the default
+        major, minor, patch = wagtail_version[:3]
+        if major == 1 and minor < 11:
+            model.relative_url = _new_relative_url
+            model.url = _new_url
+
         _patch_clean(model)
 
     def _patch_other_models(self, model):
