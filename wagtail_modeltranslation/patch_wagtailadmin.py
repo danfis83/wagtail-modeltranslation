@@ -252,6 +252,12 @@ def _new_set_url_path(self, parent):
             # which always has a url_path of '/'
             setattr(self, localized_url_path_field, '/')
 
+    # if the page does not have localized fields, url_path may be empty
+    # (which is breaking)
+    if not self.url_path:
+        url_path = parent and parent.url_path + self.slug + '/' or '/'
+        setattr(self, 'url_path', url_path)
+
     # update url_path for children pages
     for child in self.get_children().specific():
         child.set_url_path(self.specific)
@@ -316,7 +322,7 @@ def _new_get_site_root_paths():
     return result
 
 
-def _new_relative_url(self, current_site):
+def _new_relative_url(self, current_site, request=None):
     """
     Return the 'most appropriate' URL for this page taking into account the site we're currently on;
     a local URL if the site matches, or a fully qualified one otherwise.
@@ -332,7 +338,7 @@ def _new_relative_url(self, current_site):
 
 
 @property
-def _new_url(self):
+def _new_url(self, request=None, current_site=None):
     """
     Return the 'most appropriate' URL for referring to this page from the pages we serve,
     within the Wagtail backend and actual website templates;
