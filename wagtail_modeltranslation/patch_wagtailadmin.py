@@ -251,7 +251,7 @@ def _new_set_url_path(self, parent):
             parent_url_path = getattr(parent, localized_url_path_field, None) or \
                               getattr(parent, default_localized_url_path_field, parent.url_path)
 
-            setattr(self, localized_url_path_field, parent_url_path + (slug or '') + '/')
+            setattr(self, localized_url_path_field, parent_url_path + slug + '/')
 
         else:
             # a page without a parent is the tree root,
